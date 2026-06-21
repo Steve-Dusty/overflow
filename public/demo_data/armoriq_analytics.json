@@ -1,0 +1,161 @@
+{
+  "generatedAt": "2026-06-21T16:31:23.947Z",
+  "mode": "monitor",
+  "live": true,
+  "summary": {
+    "agents": 5,
+    "intents": 5,
+    "planAssuranceVerified": 5,
+    "policyDecisions": 42,
+    "allow": 42,
+    "block": 0,
+    "hold": 0,
+    "delegationEdges": 4,
+    "toolsGoverned": 8
+  },
+  "agents": [
+    {
+      "id": "overflow-fleet-coordinator",
+      "role": "coordinator",
+      "goal": "Orchestrate the AV safety-review fleet and delegate scoped subtasks.",
+      "tokenId": "2c954171800341a199e0c057e310fae2",
+      "planHash": "a303df867cc42e30ece7543b999b60117b36dee62aba34870251f071e62d61ca",
+      "verified": true,
+      "steps": 5,
+      "allowed": 5,
+      "blocked": 0,
+      "held": 0,
+      "tools": [
+        "coordinate_fleet"
+      ],
+      "isCoordinator": true
+    },
+    {
+      "id": "overflow-perception-agent",
+      "role": "perception",
+      "goal": "Detect and classify every road agent across the scene set.",
+      "tokenId": "77363d7c732243c3b09fa42ecaa3a5c8",
+      "planHash": "0d49ac57a4b06625cce3232a51f46665a411918e1fd9e592afa3e4a617a34d36",
+      "verified": true,
+      "steps": 14,
+      "allowed": 14,
+      "blocked": 0,
+      "held": 0,
+      "tools": [
+        "detect_objects",
+        "classify_threats"
+      ],
+      "isCoordinator": false
+    },
+    {
+      "id": "overflow-safety-auditor",
+      "role": "safety-auditor",
+      "goal": "Audit every incident and score collision risk.",
+      "tokenId": "28e23401ebc44a1ba8b3d7acdf28a44e",
+      "planHash": "2879ce47c3e5fb09e3fa63093de88390a58b85c94a775964511c8e55996539c1",
+      "verified": true,
+      "steps": 7,
+      "allowed": 7,
+      "blocked": 0,
+      "held": 0,
+      "tools": [
+        "assess_risk"
+      ],
+      "isCoordinator": false
+    },
+    {
+      "id": "overflow-planner-agent",
+      "role": "planner",
+      "goal": "Plan a safe ego maneuver for each critical incident.",
+      "tokenId": "1acfb4183c1e447694d7ec1212275474",
+      "planHash": "d6a966f40a6370c0d2a2d12cc15cb546fa1a45a92c31d63ad50152f3942b33ff",
+      "verified": true,
+      "steps": 5,
+      "allowed": 5,
+      "blocked": 0,
+      "held": 0,
+      "tools": [
+        "plan_maneuver"
+      ],
+      "isCoordinator": false
+    },
+    {
+      "id": "overflow-policy-agent",
+      "role": "policy",
+      "goal": "Draft and deploy policy updates for the highest-risk incidents.",
+      "tokenId": "bdbfc242e1ee4a25a3ed27192cd1bd48",
+      "planHash": "1d5f70e8e95152d605c9f29fca418c80d90a5665317e10d8bfa65e25299f0569",
+      "verified": true,
+      "steps": 11,
+      "allowed": 11,
+      "blocked": 0,
+      "held": 0,
+      "tools": [
+        "draft_policy",
+        "override_safety_limit",
+        "deploy_policy"
+      ],
+      "isCoordinator": false
+    }
+  ],
+  "delegations": [
+    {
+      "from": "overflow-fleet-coordinator",
+      "to": "overflow-perception-agent",
+      "trustId": "3baae451-981f-4c73-a109-cfd8937dd7c4",
+      "subtreePath": "0"
+    },
+    {
+      "from": "overflow-fleet-coordinator",
+      "to": "overflow-safety-auditor",
+      "trustId": "a87d7e85-77ad-478b-bad5-30baa1489295",
+      "subtreePath": "1"
+    },
+    {
+      "from": "overflow-fleet-coordinator",
+      "to": "overflow-planner-agent",
+      "trustId": "1c94b7c7-a926-46ba-b7a7-7ceb2e25a03a",
+      "subtreePath": "2"
+    },
+    {
+      "from": "overflow-fleet-coordinator",
+      "to": "overflow-policy-agent",
+      "trustId": "af3473ba-30fe-4ff3-a309-7a0e6761df1c",
+      "subtreePath": "3"
+    }
+  ],
+  "tools": [
+    {
+      "name": "detect_objects",
+      "count": 7
+    },
+    {
+      "name": "classify_threats",
+      "count": 7
+    },
+    {
+      "name": "assess_risk",
+      "count": 7
+    },
+    {
+      "name": "coordinate_fleet",
+      "count": 5
+    },
+    {
+      "name": "plan_maneuver",
+      "count": 5
+    },
+    {
+      "name": "draft_policy",
+      "count": 5
+    },
+    {
+      "name": "deploy_policy",
+      "count": 5
+    },
+    {
+      "name": "override_safety_limit",
+      "count": 1
+    }
+  ]
+}

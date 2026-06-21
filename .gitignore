@@ -43,3 +43,14 @@ scripts/_scan_tmp/
 *.njsproj
 *.sln
 *.sw?
+
+# Python venv + caches (AgentSpan / Band integration)
+.venv/
+__pycache__/
+*.pyc
+
+# AgentSpan local runtime data / JAR cache
+.agentspan/
+
+# Band per-agent config may hold UUIDs/keys — commit band_agent_config.example.yaml only
+band_agent_config.yaml

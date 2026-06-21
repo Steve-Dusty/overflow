@@ -11,6 +11,7 @@ import {
   Upload,
   ListOrdered,
   Brain,
+  ShieldCheck,
 } from "lucide-react";
 import { colors, fonts, typeScale, spacing, glass } from "../../theme";
 import ArmorIQStatus from "../ArmorIQStatus";
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { path: "/rank", label: "Rank", icon: ListOrdered },
   { path: "/graph", label: "Policy Brain", icon: Brain },
   { path: "/analytics", label: "Analytics", icon: BarChart3 },
+  { path: "/armoriq", label: "ArmorIQ", icon: ShieldCheck },
 ] as const;
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -89,8 +91,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             ...typeScale.h3,
             color: colors.textPrimary,
             letterSpacing: "-0.01em",
+            whiteSpace: "nowrap",
           }}>
-            Overflow
+            Improving Autonomous Vehicles
           </span>
         </div>
 
@@ -172,7 +175,7 @@ function OpenEnvStatus() {
         ...typeScale.caption,
         color: colors.textSecondary,
       }}>
-        Overflow
+        Live
       </span>
     </div>
   );

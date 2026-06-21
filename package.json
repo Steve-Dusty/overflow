@@ -1,5 +1,5 @@
 {
-  "name": "openenv",
+  "name": "improving-autonomous-vehicles",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,15 @@
     "preview": "vite preview",
     "generate-scenarios": "tsx scripts/generate-scenarios.ts",
     "agent": "node scripts/armoriq_agent.mjs",
-    "fleet": "node scripts/armoriq_fleet.mjs"
+    "fleet": "node scripts/armoriq_fleet.mjs",
+    "agentspan": "./.venv/bin/python scripts/agentspan_agent.py",
+    "agentspan:fleet": "./.venv/bin/python scripts/agentspan_fleet.py",
+    "agentspan:hitl": "./.venv/bin/python scripts/agentspan_hitl.py",
+    "agentspan:resume": "./.venv/bin/python scripts/agentspan_resume.py",
+    "agentspan:test": "./.venv/bin/python scripts/agentspan_test.py",
+    "agentspan:server": "./.venv/bin/agentspan server start",
+    "agentspan:tui": "./.venv/bin/agentspan tui",
+    "band": "./.venv/bin/python scripts/band_agents.py"
   },
   "dependencies": {
     "@armoriq/sdk": "^0.3.8",

@@ -1,4 +1,4 @@
-# OpenENV
+# Improving Autonomous Vehicles
 
 Multi-sim dashboard for autonomous vehicle perception. Replays Waymo scenes in 3D, proposes ego actions via the OpenEnv model, and continuously spawns counterfactual rollouts to compare "what if the ego chose differently?"
 
@@ -84,3 +84,15 @@ src/
   theme.ts         Design tokens (colors, typography, spacing)
   mockData.ts      Synthetic scenario generation + LiDAR raytracing
 ```
+
+## Agent stack — ArmorIQ · AgentSpan · Band
+
+Overflow runs an AV-safety agent fleet on three layers of agent infrastructure:
+
+- **ArmorIQ** (`scripts/armoriq_*.mjs`) — governance: every tool call gated by a signed intent token. `npm run agent`, `npm run fleet`.
+- **AgentSpan** (`scripts/agentspan_*.py`) — durable execution: crash-resume, retries, structured output, guardrails, human approval. `npm run agentspan`, `npm run agentspan:fleet`.
+- **Band** (`scripts/band_agents.py`) — cross-agent discovery + `@mention` coordination. `npm run band -- auditor`.
+
+Python setup (once): `uv venv .venv && uv pip install -r requirements-agents.txt` — the agents reuse the OpenAI key in `server/.env`.
+
+See **[AGENT_STACK.md](AGENT_STACK.md)** for the full story and run guide.

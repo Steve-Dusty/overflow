@@ -1,0 +1,14 @@
+# Python deps for the Overflow agent stack.
+#   Durable execution:        AgentSpan  (Orkes / agentspan.ai)
+#   Cross-agent coordination: Band       (band.ai)
+#
+# Setup (uv recommended):
+#   uv venv .venv
+#   uv pip install -r requirements-agents.txt
+# or:
+#   python -m venv .venv && .venv/bin/pip install -r requirements-agents.txt
+#
+# LLM key: the agents reuse overflow's OPENAI_API_KEY from server/.env automatically.
+
+agentspan>=0.1.10
+band-sdk[anthropic]>=1.0.0

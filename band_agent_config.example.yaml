@@ -1,0 +1,25 @@
+# Band remote-agent registry for the Overflow AV-safety fleet.
+#
+#   1. In the Band dashboard (app.band.ai): Agents → New Agent → Remote Agent,
+#      one per role below.
+#   2. Paste each agent's UUID into its agent_id.
+#   3. Copy this file to band_agent_config.yaml (gitignored), and put your key in .env:
+#         BAND_API_KEY=band_u_...
+#
+# The agent *description* (in scripts/band_agents.py) is what other agents discover
+# and @mention — that's Band's no-orchestrator coordination model.
+
+overflow-perception-agent:
+  agent_id: "REPLACE_WITH_BAND_UUID"
+
+overflow-safety-auditor:
+  agent_id: "REPLACE_WITH_BAND_UUID"
+
+overflow-planner-agent:
+  agent_id: "REPLACE_WITH_BAND_UUID"
+
+overflow-policy-agent:
+  agent_id: "REPLACE_WITH_BAND_UUID"
+
+overflow-fleet-coordinator:
+  agent_id: "REPLACE_WITH_BAND_UUID"

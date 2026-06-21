@@ -13,6 +13,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import { lazy, Suspense } from "react";
 const UploadPage = lazy(() => import("./pages/UploadPage"));
 const RankPage = lazy(() => import("./pages/RankPage"));
+const ArmorIQPage = lazy(() => import("./pages/ArmorIQPage"));
 import { useStore } from "./store";
 import type { DataSource } from "./store";
 import { ALL_SCENARIOS } from "./mockData";
@@ -375,6 +376,7 @@ export default function App() {
             <Route path="/rank" element={<RankPage />} />
             <Route path="/graph" element={<GraphPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/armoriq" element={<ArmorIQPage />} />
           </SentryRoutes>
         </Suspense>
       </AppShell>

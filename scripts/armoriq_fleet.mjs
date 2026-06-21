@@ -24,7 +24,7 @@
  *   npm run fleet -- --enforce    # force enforce mode (blocks actually skip tools)
  */
 
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
@@ -147,23 +147,26 @@ async function runAgent(def) {
   if (!a.live) {
     console.log(c.yellow('   shadow (no ARMORIQ_API_KEY) — executing tools without enforcement'))
     for (const s of def.plan) TOOLS[s.tool]?.(s.args)
-    return { ...def, agent: a, tokenId: null, allowed: def.plan.length, blocked: 0 }
+    return { ...def, agent: a, tokenId: null, planHash: null, verified: false, allowed: def.plan.length, blocked: 0, held: 0 }
   }
 
   // 1) Intent + Plan Assurance — declare the plan, mint + verify the signed token.
   const token = await safe('startPlan', () => a.session.startPlan(def.plan.map((s) => ({ name: s.tool, args: s.args })), def.goal))
   const tokenId = a.session.currentTokenValue?.tokenId ?? null
+  const planHash = a.session.currentTokenValue?.planHash ?? null
   const verified = token ? await safe('verifyToken', () => a.client.verifyToken(a.session.currentTokenValue), false) : false
   console.log(`   intent token ${tokenId ? c.green(tokenId.slice(0, 12) + '…') : c.red('none')}  ${c.dim('plan-assurance')} ${verified ? c.green('verified ✓') : c.yellow('unverified')}  ${c.dim(def.plan.length + ' steps')}`)
 
   // 2) Policies — enforce each step before executing it.
   let allowed = 0, blocked = 0, held = 0
+  const steps = []
   for (const s of def.plan) {
     const v = await safe('enforce', () => a.session.enforce(s.tool, s.args), { allowed: true, action: 'allow', reason: 'fail-open' })
     const act = v.action || (v.allowed ? 'allow' : 'block')
     const skip = MODE === 'enforce' && act !== 'allow'
     const mk = act === 'block' ? c.red('⨯ block') : act === 'hold' ? c.yellow('⏸ hold') : c.green('✓ allow')
     console.log(`   ${c.cyan('▸')} ${s.tool.padEnd(22)} ${mk}${v.matchedPolicy ? c.dim('  policy:' + v.matchedPolicy) : ''}${skip ? c.red('  [skipped]') : ''}`)
+    steps.push({ tool: s.tool, action: act, allowed: !skip, matchedPolicy: v.matchedPolicy ?? null })
     if (skip) { blocked++; continue }
     if (act === 'hold') held++
     allowed++
@@ -171,7 +174,7 @@ async function runAgent(def) {
     await safe('report', () => a.session.report(s.tool, s.args, result, { status: 'success' }))
   }
   console.log(c.dim(`   ${allowed} allowed, ${blocked} blocked, ${held} held`))
-  return { ...def, agent: a, tokenId, allowed, blocked }
+  return { ...def, agent: a, tokenId, planHash, verified, allowed, blocked, held, steps }
 }
 
 // ---------------------------------------------------------------------------
@@ -187,10 +190,10 @@ async function delegateToWorkers(coordinator, workers) {
   console.log(c.bold('\n◆ AI Graph — coordinator delegating scoped authority'))
   if (!coordinator.agent?.live || !coordinator.agent.session.currentTokenValue) {
     console.log(c.yellow('   no coordinator token — skipping delegation'))
-    return 0
+    return []
   }
   const coordToken = coordinator.agent.session.currentTokenValue
-  let edges = 0
+  const edges = []
   // Each worker is delegated a distinct Merkle subtree of the coordinator's
   // signed plan (subtreePath = the coordinator step that delegates to it). The
   // backend returns a child token + inclusion proof → a coordinator→worker edge.
@@ -206,7 +209,7 @@ async function delegateToWorkers(coordinator, workers) {
         targetAgent: w.id,
       }))
     if (res?.delegatedToken) {
-      edges++
+      edges.push({ from: coordinator.id, to: w.id, trustId: res.trustId ?? null, subtreePath })
       console.log(`   ${c.mag('⇢')} ${coordinator.id} ${c.dim('→')} ${w.id}  ${c.green('delegated')}${res.trustId ? c.dim('  trust:' + String(res.trustId).slice(0, 10) + '  subtree:' + subtreePath) : ''}`)
     } else {
       console.log(`   ${c.mag('⇢')} ${coordinator.id} ${c.dim('→')} ${w.id}  ${c.yellow('no delegation token returned')}`)
@@ -265,6 +268,48 @@ function buildFleet() {
   return { workers, coordinator }
 }
 
+function writeAnalytics(results, edges, totalAllowed, totalBlocked, activeAgents) {
+  const role = (id) => id.replace(/^overflow-/, '').replace(/-agent$/, '').replace(/^fleet-/, '')
+  const agents = results.map((r) => ({
+    id: r.id,
+    role: role(r.id),
+    goal: r.goal,
+    tokenId: r.tokenId ?? null,
+    planHash: r.planHash ?? null,
+    verified: !!r.verified,
+    steps: r.plan.length,
+    allowed: r.allowed || 0,
+    blocked: r.blocked || 0,
+    held: r.held || 0,
+    tools: [...new Set(r.plan.map((s) => s.tool))],
+    isCoordinator: /coordinator/.test(r.id),
+  }))
+  const toolCounts = {}
+  for (const r of results) for (const s of r.plan) toolCounts[s.tool] = (toolCounts[s.tool] || 0) + 1
+  const totalHeld = results.reduce((n, r) => n + (r.held || 0), 0)
+  const analytics = {
+    generatedAt: new Date(Date.now()).toISOString(),
+    mode: MODE,
+    live: Boolean(env.ARMORIQ_API_KEY),
+    summary: {
+      agents: activeAgents || agents.filter((a) => a.tokenId).length,
+      intents: agents.filter((a) => a.tokenId).length,
+      planAssuranceVerified: agents.filter((a) => a.verified).length,
+      policyDecisions: totalAllowed + totalBlocked,
+      allow: totalAllowed,
+      block: totalBlocked,
+      hold: totalHeld,
+      delegationEdges: edges.length,
+      toolsGoverned: Object.keys(toolCounts).length,
+    },
+    agents,
+    delegations: edges,
+    tools: Object.entries(toolCounts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count),
+  }
+  writeFileSync(join(DEMO_DIR, 'armoriq_analytics.json'), JSON.stringify(analytics, null, 2))
+  console.log(c.dim('analytics → public/demo_data/armoriq_analytics.json'))
+}
+
 async function main() {
   const { workers, coordinator } = buildFleet()
   const live = Boolean(env.ARMORIQ_API_KEY)
@@ -286,7 +331,11 @@ async function main() {
   const totalBlocked = [coordResult, ...workerResults].reduce((n, r) => n + (r.blocked || 0), 0)
   const activeAgents = [coordResult, ...workerResults].filter((r) => r.tokenId).length
   console.log(c.bold('\n──────────────────────────────────────────────────────────────'))
-  console.log(`${c.green(`● ${activeAgents} agents active`)}   ${c.green(`✓ ${totalAllowed} actions`)}${totalBlocked ? `   ${c.red(`⨯ ${totalBlocked} blocked`)}` : ''}   ${c.mag(`◆ ${edges} delegation edges`)}`)
+  console.log(`${c.green(`● ${activeAgents} agents active`)}   ${c.green(`✓ ${totalAllowed} actions`)}${totalBlocked ? `   ${c.red(`⨯ ${totalBlocked} blocked`)}` : ''}   ${c.mag(`◆ ${edges.length} delegation edges`)}`)
+
+  // Export real analytics for the in-app ArmorIQ dashboard (/armoriq).
+  writeAnalytics([coordResult, ...workerResults], edges, totalAllowed, totalBlocked, activeAgents)
+
   if (live) {
     console.log(c.dim('Open the ArmorIQ dashboard — Agents, Intent Intelligence, Plan Assurance,'))
     console.log(c.dim('Policies, and the AI Graph are now populated by the Overflow fleet.'))
