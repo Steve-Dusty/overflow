@@ -6,61 +6,42 @@
 
 import type { Incident } from "./types";
 import type { ScenarioId } from "../mockData";
+import { log } from "./sentry";
 
 // ---------------------------------------------------------------------------
 // Config
 // ---------------------------------------------------------------------------
 
-const ENDPOINT =
-  import.meta.env.VITE_OVERFLOW_H100_ENDPOINT ||
-  "https://api.openai.com/v1/chat/completions";
-const API_KEY =
-  import.meta.env.VITE_OVERFLOW_API_KEY || "";
-const MODEL =
-  import.meta.env.VITE_OVERFLOW_MODEL || "gpt-4o-mini";
-
-function hasApiKey(): boolean {
-  return API_KEY.length > 10;
-}
+// Calls go through the Overflow backend (/api/chat) so the OpenAI key stays
+// server-side and every request is captured as a Sentry gen_ai span (with token
+// usage) and joined into the browser's distributed trace.
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8787";
+const MODEL = import.meta.env.VITE_OVERFLOW_MODEL || "gpt-4o-mini";
 
 // ---------------------------------------------------------------------------
-// Generic chat completion
+// Generic chat completion (via instrumented backend proxy)
 // ---------------------------------------------------------------------------
 
 async function chatCompletion(
   systemPrompt: string,
   userMessage: string,
 ): Promise<string> {
-  if (!hasApiKey()) throw new Error("no_api_key");
-
-  const isOpenAI = ENDPOINT.includes("openai.com");
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (isOpenAI) {
-    headers["Authorization"] = `Bearer ${API_KEY}`;
-  } else {
-    headers["Authorization"] = `Bearer ${API_KEY}`;
-  }
-
-  const resp = await fetch(isOpenAI ? ENDPOINT : `${ENDPOINT}`, {
+  log.info("llm.request", { model: MODEL });
+  const resp = await fetch(`${API_BASE}/api/chat`, {
     method: "POST",
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      system: systemPrompt,
+      user: userMessage,
       model: MODEL,
       temperature: 0.7,
-      max_tokens: 1500,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userMessage },
-      ],
+      maxTokens: 1500,
     }),
   });
 
   if (!resp.ok) throw new Error(`LLM API ${resp.status}`);
   const data = await resp.json();
-  return data.choices?.[0]?.message?.content ?? "";
+  return data.text ?? "";
 }
 
 // ---------------------------------------------------------------------------

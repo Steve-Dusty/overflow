@@ -21,6 +21,7 @@ import {
   Gauge,
 } from "lucide-react";
 import Scene3D from "../components/Scene3D";
+import SceneBoundary from "../components/SceneBoundary";
 import Timeline from "../components/Timeline";
 import { useStore } from "../store";
 import { colors, fonts, typeScale, spacing, glass, radius } from "../theme";
@@ -356,7 +357,9 @@ export default function AnalysisPage() {
         >
           {/* 3D Scene */}
           <div style={{ flex: 1, position: "relative", minHeight: 0 }}>
-            <Scene3D />
+            <SceneBoundary label="analysis" resetKey={scenarioId}>
+              <Scene3D />
+            </SceneBoundary>
           </div>
 
           {/* Timeline at bottom */}

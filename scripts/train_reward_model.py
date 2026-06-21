@@ -29,6 +29,22 @@ from torch.utils.data import Dataset, DataLoader
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("overflow.reward_model")
 
+# Optional Sentry observability — no-ops if sentry_obs / sentry-sdk unavailable.
+try:
+    from sentry_obs import init_sentry, record_epoch, monitor_run
+except Exception:  # pragma: no cover
+    from contextlib import contextmanager
+
+    def init_sentry(*_a, **_k):
+        return False
+
+    def record_epoch(*_a, **_k):
+        return None
+
+    @contextmanager
+    def monitor_run(*_a, **_k):
+        yield
+
 # ---------------------------------------------------------------------------
 # Model
 # ---------------------------------------------------------------------------
@@ -217,6 +233,13 @@ def train(
             f"{'  ★' if is_best else ''}"
         )
 
+        record_epoch("reward_model", epoch + 1, {
+            "loss": avg_loss,
+            "acc": avg_acc,
+            "best_acc": best_acc,
+            "lr": lr,
+        })
+
     # Save final
     torch.save(model.state_dict(), os.path.join(checkpoint_dir, "reward_model_final.pt"))
     logger.info(f"Training complete. Best accuracy: {best_acc:.1%}")
@@ -251,7 +274,13 @@ def main():
     optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
 
-    train(model, dataloader, optimizer, scheduler, args.epochs, torch.device(args.device), args.checkpoint_dir)
+    init_sentry("reward_model")
+    with monitor_run("reward_model", {
+        "epochs": args.epochs,
+        "batch_size": args.batch_size,
+        "lr": args.lr,
+    }):
+        train(model, dataloader, optimizer, scheduler, args.epochs, torch.device(args.device), args.checkpoint_dir)
 
 
 if __name__ == "__main__":

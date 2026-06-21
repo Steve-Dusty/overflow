@@ -8,11 +8,16 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-scenarios": "tsx scripts/generate-scenarios.ts"
+    "generate-scenarios": "tsx scripts/generate-scenarios.ts",
+    "agent": "node scripts/armoriq_agent.mjs",
+    "fleet": "node scripts/armoriq_fleet.mjs"
   },
   "dependencies": {
+    "@armoriq/sdk": "^0.3.8",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@sentry/react": "^10.59.0",
+    "@sentry/vite-plugin": "^5.3.0",
     "hyparquet": "^1.25.1",
     "hyparquet-compressors": "^1.1.1",
     "lucide-react": "^0.577.0",

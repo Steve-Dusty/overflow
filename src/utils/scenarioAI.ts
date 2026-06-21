@@ -132,46 +132,33 @@ export async function generateScenario(
   prompt: string,
   onStatus?: (msg: string) => void,
 ): Promise<{ scenario: CustomScenarioDef | null; error: string | null; raw: string }> {
-  const key = getApiKey();
-  if (!key) {
-    return { scenario: null, error: "No API key set. Enter your OpenAI API key above.", raw: "" };
-  }
-
   onStatus?.("Generating scenario…");
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Through the Overflow backend (/api/chat): key stays server-side and the
+    // call is captured as a Sentry gen_ai span joined to the browser's trace.
+    const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8787";
+    const res = await fetch(`${API_BASE}/api/chat`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        system: SYSTEM_PROMPT,
+        user: `Generate a detailed, complex, and realistic driving scenario based on this description:\n\n"${prompt}"\n\nRemember:\n- Include 8-12 actors minimum (moving traffic, parked cars, pedestrians, cyclists)\n- Make ego reactions physically realistic\n- Use the full 19.8s timeline\n- Make the incident dramatic and easy to spot\n- Include multiple actor events for complex behavior\n- Output ONLY valid JSON`,
         model: "gpt-4o-mini",
         temperature: 0.8,
-        max_tokens: 4000,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          {
-            role: "user",
-            content: `Generate a detailed, complex, and realistic driving scenario based on this description:\n\n"${prompt}"\n\nRemember:\n- Include 8-12 actors minimum (moving traffic, parked cars, pedestrians, cyclists)\n- Make ego reactions physically realistic\n- Use the full 19.8s timeline\n- Make the incident dramatic and easy to spot\n- Include multiple actor events for complex behavior\n- Output ONLY valid JSON`,
-          },
-        ],
+        maxTokens: 4000,
       }),
     });
 
     if (!res.ok) {
       const errBody = await res.text();
-      if (res.status === 401) {
-        return { scenario: null, error: "Invalid API key. Check your OpenAI key.", raw: errBody };
-      }
-      return { scenario: null, error: `API error ${res.status}: ${errBody.slice(0, 200)}`, raw: errBody };
+      return { scenario: null, error: `Scenario service error ${res.status}: ${errBody.slice(0, 200)}`, raw: errBody };
     }
 
     onStatus?.("Parsing response…");
 
     const data = await res.json();
-    const content: string = data.choices?.[0]?.message?.content ?? "";
+    const content: string = data.text ?? "";
 
     // Extract JSON from response (handle markdown code blocks)
     let jsonStr = content.trim();

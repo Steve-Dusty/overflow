@@ -9,6 +9,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Scene3D from "../components/Scene3D";
+import SceneBoundary from "../components/SceneBoundary";
 import { useStore } from "../store";
 import { loadScenarioVariants } from "../utils/scenarioLoader";
 import { VARIANT_INFO, VARIANT_METRICS } from "../mockData";
@@ -556,13 +557,15 @@ function ComparisonTile({
 
       {/* 3D scene */}
       <div style={{ flex: 1, position: "relative", background: colors.bgDeep, minHeight: 0 }}>
-        <Scene3D
-          frameOverrideHolder={frameHolder}
-          offset={VARIANT_OFFSETS[option.variant]}
-          trail={trail}
-          trailColor={option.color}
-          lite
-        />
+        <SceneBoundary label={`compare-${option.variant}`} resetKey={option.variant}>
+          <Scene3D
+            frameOverrideHolder={frameHolder}
+            offset={VARIANT_OFFSETS[option.variant]}
+            trail={trail}
+            trailColor={option.color}
+            lite
+          />
+        </SceneBoundary>
 
         {/* Colored border highlight */}
         <div style={{

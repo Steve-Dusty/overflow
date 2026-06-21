@@ -34,6 +34,22 @@ from torch.distributions import Categorical
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("overflow.grpo")
 
+# Optional Sentry observability — no-ops if sentry_obs / sentry-sdk unavailable.
+try:
+    from sentry_obs import init_sentry, record_epoch, monitor_run
+except Exception:  # pragma: no cover
+    from contextlib import contextmanager
+
+    def init_sentry(*_a, **_k):
+        return False
+
+    def record_epoch(*_a, **_k):
+        return None
+
+    @contextmanager
+    def monitor_run(*_a, **_k):
+        yield
+
 
 # ---------------------------------------------------------------------------
 # Trajectory Policy Model
@@ -364,6 +380,14 @@ class GRPOTrainer:
                 f"{'  ★' if is_best else ''}"
             )
 
+            record_epoch("grpo", epoch + 1, {
+                "avg_reward": epoch_metrics["avg_reward"],
+                "best_reward": epoch_metrics["best_reward"],
+                "loss": epoch_metrics["loss"],
+                "kl": epoch_metrics["kl"],
+                "lr": lr,
+            })
+
             # Adaptive KL coefficient
             if epoch_metrics["kl"] > self.config.kl_budget * 1.5:
                 self.config.kl_coeff *= 2.0
@@ -422,8 +446,16 @@ def main():
         epochs=args.epochs,
         batch_size=args.batch_size,
     )
+    init_sentry("grpo")
     trainer = GRPOTrainer(policy, reward_model, config, device)
-    trainer.train(scene_data)
+    with monitor_run("grpo", {
+        "epochs": args.epochs,
+        "k_candidates": args.k_candidates,
+        "kl_budget": args.kl_budget,
+        "lr": args.lr,
+        "batch_size": args.batch_size,
+    }):
+        trainer.train(scene_data)
 
 
 if __name__ == "__main__":

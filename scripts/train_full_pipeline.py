@@ -32,6 +32,22 @@ from train_grpo import TrajectoryPolicyModel, GRPOTrainer, GRPOConfig
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("overflow.pipeline")
 
+# Optional Sentry observability — no-ops if sentry_obs / sentry-sdk unavailable.
+try:
+    from sentry_obs import init_sentry, record_epoch, monitor_run
+except Exception:  # pragma: no cover
+    from contextlib import contextmanager
+
+    def init_sentry(*_a, **_k):
+        return False
+
+    def record_epoch(*_a, **_k):
+        return None
+
+    @contextmanager
+    def monitor_run(*_a, **_k):
+        yield
+
 
 # ---------------------------------------------------------------------------
 # Phase 1: Load preferences
@@ -100,6 +116,8 @@ def train_reward_model(
         avg_loss = total_loss / n
         avg_acc = total_acc / n
         best_acc = max(best_acc, avg_acc)
+
+        record_epoch("reward_model", epoch + 1, {"loss": avg_loss, "acc": avg_acc, "best_acc": best_acc})
 
         if (epoch + 1) % 10 == 0 or epoch == 0 or epoch == epochs - 1:
             logger.info(
@@ -241,29 +259,38 @@ def main():
     logger.info("║        Overflow — Full RLHF/GRPO Training Pipeline          ║")
     logger.info("╚══════════════════════════════════════════════════════════════╝")
 
-    # Phase 1
-    dataloader, n_pairs = load_preferences(args.preferences, args.scenes, args.batch_size)
+    init_sentry("pipeline")
+    with monitor_run("pipeline", {
+        "rm_epochs": args.rm_epochs,
+        "grpo_epochs": args.grpo_epochs,
+        "batch_size": args.batch_size,
+        "lr": args.lr,
+        "k_candidates": args.k_candidates,
+        "device": args.device,
+    }):
+        # Phase 1
+        dataloader, n_pairs = load_preferences(args.preferences, args.scenes, args.batch_size)
 
-    # Phase 2
-    reward_model = train_reward_model(dataloader, args.rm_epochs, args.lr, device, args.output_dir)
+        # Phase 2
+        reward_model = train_reward_model(dataloader, args.rm_epochs, args.lr, device, args.output_dir)
 
-    # Phase 3
-    scene_data = torch.load(args.scenes, map_location=device, weights_only=True)
-    grpo_config = GRPOConfig(
-        k_candidates=args.k_candidates,
-        epochs=args.grpo_epochs,
-        batch_size=args.batch_size,
-    )
-    policy = train_grpo(reward_model, scene_data, grpo_config, device, args.output_dir)
+        # Phase 3
+        scene_data = torch.load(args.scenes, map_location=device, weights_only=True)
+        grpo_config = GRPOConfig(
+            k_candidates=args.k_candidates,
+            epochs=args.grpo_epochs,
+            batch_size=args.batch_size,
+        )
+        policy = train_grpo(reward_model, scene_data, grpo_config, device, args.output_dir)
 
-    # Phase 4
-    eval_scenes = scene_data  # use training scenes as fallback
-    if args.eval_scenes:
-        eval_scenes = torch.load(args.eval_scenes, map_location=device, weights_only=True)
-    eval_metrics = evaluate(policy, reward_model, eval_scenes, device)
+        # Phase 4
+        eval_scenes = scene_data  # use training scenes as fallback
+        if args.eval_scenes:
+            eval_scenes = torch.load(args.eval_scenes, map_location=device, weights_only=True)
+        eval_metrics = evaluate(policy, reward_model, eval_scenes, device)
 
-    # Phase 5
-    export_model(policy, eval_metrics, args.output_dir, n_pairs)
+        # Phase 5
+        export_model(policy, eval_metrics, args.output_dir, n_pairs)
 
 
 if __name__ == "__main__":

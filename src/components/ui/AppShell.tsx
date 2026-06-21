@@ -13,6 +13,7 @@ import {
   Brain,
 } from "lucide-react";
 import { colors, fonts, typeScale, spacing, glass } from "../../theme";
+import ArmorIQStatus from "../ArmorIQStatus";
 
 const NAV_ITEMS = [
   { path: "/upload", label: "Upload", icon: Upload },
@@ -124,12 +125,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </div>
 
-        {/* Right: status indicator */}
+        {/* Right: status indicators */}
         <div style={{
           display: "flex",
           alignItems: "center",
           gap: spacing.sm,
         }}>
+          <ArmorIQStatus />
           <OpenEnvStatus />
         </div>
       </nav>

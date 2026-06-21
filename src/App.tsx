@@ -27,6 +27,11 @@ import {
 } from "./utils/waymoLoader";
 import { getCachedScene, setCachedScene, cacheKey } from "./utils/sceneCache";
 import { colors, fonts, typeScale } from "./theme";
+import { captureError, setSentryScenario, Sentry } from "./lib/sentry";
+
+// Route-aware tracing wrapper for react-router v7 (parameterized transactions
+// like "/sim" instead of raw URLs). No-op when Sentry isn't initialized.
+const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
 
 // ---------------------------------------------------------------------------
 // Auto-detect waymo data layout
@@ -87,6 +92,10 @@ function useScenarioPreloader() {
       })
       .catch((e) => {
         console.error("[preloader] Failed to load scenario:", e);
+        captureError(e, {
+          tags: { phase: "preload" },
+          contexts: { scenario: { id: defaultScenario } },
+        });
         actions.setLoadError(e instanceof Error ? e.message : String(e));
         actions.setLoadStatus("error");
       });
@@ -114,6 +123,7 @@ function useDataLoader() {
       actions.setLoadStatus("loading");
       actions.setLoadMessage(`Loading "${scenarioId}" scenario`);
       actions.setLoadProgress(0.1);
+      setSentryScenario(scenarioId);
 
       loadScenario(scenarioId, "ground_truth", (msg, progress) => {
         actions.setLoadMessage(msg);
@@ -125,6 +135,10 @@ function useDataLoader() {
           actions.setTrajectoryMoments(moments);
         })
         .catch((e) => {
+          captureError(e, {
+            tags: { phase: "load-scenario" },
+            contexts: { scenario: { id: scenarioId } },
+          });
           actions.setLoadError(e instanceof Error ? e.message : String(e));
           actions.setLoadStatus("error");
         });
@@ -167,6 +181,10 @@ function useDataLoader() {
         })
         .catch((e) => {
           console.error("[loadWaymo] Error:", e);
+          captureError(e, {
+            tags: { phase: "load-waymo" },
+            contexts: { waymo: { segment: waymoSegment ?? null } },
+          });
           actions.setLoadError(e instanceof Error ? e.message : String(e));
           actions.setLoadStatus("error");
         });
@@ -292,6 +310,7 @@ function useDropZone() {
       // Cache dropped data for next reload
       setCachedScene(cacheKey("waymo-drop"), data).catch(() => {});
     } catch (err) {
+      captureError(err, { tags: { phase: "waymo-drop" } });
       actions.setLoadError(err instanceof Error ? err.message : String(err));
       actions.setLoadStatus("error");
       toast.error("Failed to load Waymo data");
@@ -348,7 +367,7 @@ export default function App() {
 
       <AppShell>
         <Suspense fallback={null}>
-          <Routes>
+          <SentryRoutes>
             <Route path="/" element={<Navigate to="/sim" replace />} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/sim" element={<SimPage />} />
@@ -356,7 +375,7 @@ export default function App() {
             <Route path="/rank" element={<RankPage />} />
             <Route path="/graph" element={<GraphPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
-          </Routes>
+          </SentryRoutes>
         </Suspense>
       </AppShell>
 

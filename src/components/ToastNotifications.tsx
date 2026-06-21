@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useStore } from "../store";
 import { colors, fonts } from "../theme";
+import { captureDrivingIncident } from "../lib/sentry";
 import type { BBox3D } from "../mockData";
 
 // ---------------------------------------------------------------------------
@@ -211,6 +212,25 @@ export default function ToastNotifications() {
           egoPosition: state.currentFrame.egoPosition ?? null,
           objectId: inc.objectId,
         });
+
+        // Incident bridge: route warning/critical *driving* incidents into
+        // Sentry as first-class issues — reliability = safety, made literal.
+        // (Per-object/severity throttling above already prevents flooding.)
+        if (inc.severity !== "info") {
+          const lead = inc.involved[0];
+          captureDrivingIncident({
+            kind: inc.title,
+            severity: inc.severity,
+            scenarioId: state.scenarioId,
+            frame: fi,
+            time: t,
+            detail: inc.what,
+            objectId: inc.objectId,
+            metrics: lead
+              ? { distance_m: lead.dist, object_speed_ms: lead.speed }
+              : undefined,
+          });
+        }
       }
 
       if (newToasts.length > 0) {

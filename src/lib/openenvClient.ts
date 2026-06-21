@@ -3,6 +3,8 @@
  * Supports REAL mode (API endpoint) and MOCK mode (deterministic pseudo-random).
  */
 
+import { traceInference, breadcrumb } from "./sentry";
+
 export interface OpenEnvInput {
   frameIndex: number;
   egoX: number;
@@ -131,6 +133,22 @@ export function getPollInterval(): number {
 }
 
 export async function getActionAndReward(input: OpenEnvInput): Promise<OpenEnvOutput> {
+  const model = import.meta.env.VITE_OVERFLOW_MODEL ?? (_mode === "real" ? "openenv" : "mock");
+  // Trace every policy query so inference latency is observable like a prod API.
+  return traceInference(
+    "openenv.getActionAndReward",
+    { mode: _mode, model, scenario: input.scenarioId, frame: input.frameIndex },
+    () => runInference(input),
+    (out) => ({
+      action: out.action,
+      reward: out.reward,
+      latency_ms: out.latencyMs,
+      branch_id: out.branchId,
+    }),
+  );
+}
+
+async function runInference(input: OpenEnvInput): Promise<OpenEnvOutput> {
   const start = performance.now();
 
   if (_mode === "real" && _endpoint) {
@@ -147,9 +165,21 @@ export async function getActionAndReward(input: OpenEnvInput): Promise<OpenEnvOu
         latencyMs: Math.round(performance.now() - start),
         timestamp: Date.now(),
       };
-    } catch {
-      // Fall back to mock
+    } catch (err) {
+      // Real endpoint degraded — fall back to mock, but make the degradation
+      // observable instead of silent: it lands as a breadcrumb on the next event.
       console.warn("[openenv] API unreachable, falling back to mock");
+      breadcrumb(
+        "openenv",
+        "real inference failed — fell back to mock",
+        {
+          endpoint: _endpoint,
+          scenario: input.scenarioId,
+          frame: input.frameIndex,
+          error: err instanceof Error ? err.message : String(err),
+        },
+        "warning",
+      );
     }
   }
 
@@ -169,9 +199,16 @@ export async function getCounterfactualVariants(
   input: OpenEnvInput,
   count: number,
 ): Promise<OpenEnvOutput[]> {
-  const baseSeed = Date.now();
-  const promises = Array.from({ length: count }, (_, i) =>
-    getActionAndReward({ ...input, branchSeed: baseSeed + i * 7919 })
+  // Parent span groups the N child inference spans into a single "spawn" trace.
+  return traceInference(
+    "openenv.counterfactuals",
+    { mode: _mode, scenario: input.scenarioId, frame: input.frameIndex, count },
+    async () => {
+      const baseSeed = Date.now();
+      const promises = Array.from({ length: count }, (_, i) =>
+        getActionAndReward({ ...input, branchSeed: baseSeed + i * 7919 })
+      );
+      return Promise.all(promises);
+    },
   );
-  return Promise.all(promises);
 }

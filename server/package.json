@@ -1,0 +1,19 @@
+{
+  "name": "overflow-server",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Overflow backend — instrumented OpenAI proxy + Sentry distributed tracing/tunnel.",
+  "scripts": {
+    "start": "node --import ./instrument.mjs index.mjs",
+    "dev": "node --watch --import ./instrument.mjs index.mjs"
+  },
+  "dependencies": {
+    "@sentry/node": "^10.59.0",
+    "@sentry/profiling-node": "^10.59.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^4.21.2",
+    "openai": "^4.77.0"
+  }
+}

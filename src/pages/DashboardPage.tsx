@@ -20,6 +20,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import Scene3D from "../components/Scene3D";
+import SceneBoundary from "../components/SceneBoundary";
 import Timeline from "../components/Timeline";
 import Badge from "../components/ui/Badge";
 import { useStore } from "../store";
@@ -148,7 +149,9 @@ export default function DashboardPage() {
             }
           />
           <div style={{ flex: 1, position: "relative", background: colors.bgDeep, minHeight: 0 }}>
-            <Scene3D />
+            <SceneBoundary label="dashboard-ground-truth" resetKey={scenarioId}>
+              <Scene3D />
+            </SceneBoundary>
           </div>
         </div>
 
@@ -246,7 +249,9 @@ function VariantTile({
       />
 
       <div style={{ flex: 1, position: "relative", background: colors.bgDeep, minHeight: 0 }}>
-        <Scene3D frameOverrideHolder={frameHolder} lite />
+        <SceneBoundary label={`dashboard-${variant}`} resetKey={variant}>
+          <Scene3D frameOverrideHolder={frameHolder} lite />
+        </SceneBoundary>
 
         {/* Colored border highlight */}
         <div style={{

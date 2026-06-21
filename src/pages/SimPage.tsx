@@ -14,6 +14,8 @@ import {
   X,
 } from "lucide-react";
 import Scene3D from "../components/Scene3D";
+import SceneBoundary from "../components/SceneBoundary";
+import ScenarioChat from "../components/ScenarioChat";
 import Timeline from "../components/Timeline";
 import { useStore } from "../store";
 import { colors, fonts, typeScale, spacing, glass } from "../theme";
@@ -71,8 +73,10 @@ export default function SimPage() {
 
   return (
     <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-      {/* 3D Canvas — THE renderer, untouched */}
-      <Scene3D />
+      {/* 3D Canvas — THE renderer, wrapped so a render crash stays local */}
+      <SceneBoundary label="sim" resetKey={scenarioId}>
+        <Scene3D />
+      </SceneBoundary>
 
       {/* ── Top Bar ── */}
       <div style={{
@@ -249,6 +253,10 @@ export default function SimPage() {
 
       {/* Timeline (bottom) — reused from existing */}
       <Timeline />
+
+      {/* AI scenario generator (floating) — natural-language → scene. Drives the
+          gen_ai / AI-monitoring + distributed-trace path through the backend. */}
+      <ScenarioChat />
     </div>
   );
 }
