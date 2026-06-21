@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Local env files (never commit real keys)
+.env
+.env.*
+!.env.example
+
+# Pre-generated scenario files (large binaries, regenerate with: npm run generate-scenarios)
+public/scenarios/
+
+# Waymo data (large parquet files)
+public/waymo_data/**/*.parquet
+public/waymo_data/manifest.json
+
+# E2E raw data (downloaded TFRecords, can be large)
+data/e2e_raw/
+data/e2e_compact/
+# Keep the committed sample:
+!data_tools/sample_e2e.json
+
+# Scan temp
+scripts/_scan_tmp/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

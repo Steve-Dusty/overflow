@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "format": "overflow-demo",
+  "name": "Near-Miss Scenario — Highway Lane Encroachment",
+  "description": "Vehicle in adjacent lane swerves into ego lane at highway speed. Demonstrates incident detection, counterfactual analysis, and GRPO policy training.",
+  "scenarioId": "near_miss",
+  "source": "Waymo Open Dataset (synthetic reconstruction)",
+  "metadata": {
+    "totalFrames": 198,
+    "fps": 10,
+    "duration": 19.8,
+    "egoSpeed": 11.0,
+    "roadType": "urban_multilane",
+    "weather": "clear",
+    "timeOfDay": "afternoon",
+    "agents": 8,
+    "lidarBeams": 64,
+    "pointsPerFrame": 45000
+  },
+  "incidents": [
+    {
+      "type": "near_miss",
+      "time": 5.5,
+      "severity": "critical",
+      "description": "Adjacent vehicle encroaches into ego lane",
+      "ttc": 1.2,
+      "minClearance": 0.3
+    },
+    {
+      "type": "hard_braking",
+      "time": 6.2,
+      "severity": "high",
+      "description": "Ego emergency braking response",
+      "deceleration": 5.8,
+      "minClearance": 0.8
+    }
+  ],
+  "variants": [
+    { "id": "ground_truth", "label": "Continue Path", "reward": -0.72, "safety": 0.12, "ttc": 1.2 },
+    { "id": "avoid_left", "label": "Swerve Left", "reward": -0.45, "safety": 0.18, "ttc": 0.8 },
+    { "id": "avoid_right", "label": "Swerve Right", "reward": 0.92, "safety": 0.94, "ttc": 4.7 },
+    { "id": "emergency_brake", "label": "Emergency Brake", "reward": 0.61, "safety": 0.71, "ttc": 2.3 }
+  ],
+  "egoTrajectory": [
+    {"t": 0.0, "x": 0, "y": -1.85, "speed": 11.0},
+    {"t": 1.0, "x": 11.0, "y": -1.85, "speed": 11.0},
+    {"t": 2.0, "x": 22.0, "y": -1.85, "speed": 11.0},
+    {"t": 3.0, "x": 33.0, "y": -1.85, "speed": 11.0},
+    {"t": 4.0, "x": 44.0, "y": -1.85, "speed": 10.8},
+    {"t": 5.0, "x": 54.8, "y": -1.85, "speed": 10.5},
+    {"t": 5.5, "x": 60.0, "y": -1.85, "speed": 9.0},
+    {"t": 6.0, "x": 64.5, "y": -1.85, "speed": 6.0},
+    {"t": 7.0, "x": 70.0, "y": -1.85, "speed": 4.0},
+    {"t": 8.0, "x": 73.5, "y": -1.85, "speed": 3.0}
+  ],
+  "agents": [
+    {"id": "veh_100", "type": "vehicle", "label": "Encroaching SUV", "startX": 15, "startY": 1.85, "speed": 11.0},
+    {"id": "veh_101", "type": "vehicle", "label": "Trailing Sedan", "startX": -10, "startY": -1.85, "speed": 12.4},
+    {"id": "veh_102", "type": "vehicle", "label": "Oncoming Truck", "startX": 60, "startY": 8.4, "speed": 14.0},
+    {"id": "ped_200", "type": "pedestrian", "label": "Sidewalk Pedestrian", "startX": 35, "startY": -7.0, "speed": 1.3},
+    {"id": "cyc_300", "type": "cyclist", "label": "Cyclist", "startX": 25, "startY": -5.5, "speed": 5.0}
+  ]
+}

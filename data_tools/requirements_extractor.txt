@@ -1,0 +1,6 @@
+# Requirements for the Waymo E2E data extractor
+# Install: pip install -r data_tools/requirements_extractor.txt
+tensorflow>=2.12.0
+waymo-open-dataset-tf-2-12-0
+numpy>=1.24.0
+protobuf>=3.20.0

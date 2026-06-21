@@ -1,0 +1,370 @@
+{
+  "context_name": "waymo_open_dataset_v2",
+  "segment_id": "10153144370820843572_2900_000_2920_000",
+  "segment_timestamp_micros": 1557866789012345,
+  "stats": {
+    "total_frames": 198,
+    "fps": 10,
+    "time_of_day": "Day",
+    "weather": "cloudy",
+    "location": "location_sf"
+  },
+  "ego_vehicle": {
+    "type": "WAYMO_AV",
+    "length": 4.9,
+    "width": 2.1,
+    "height": 1.7
+  },
+  "frames": [
+    {
+      "ts": 0.0,
+      "ego_x": 0.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 12.0,
+      "num_points": 47200
+    },
+    {
+      "ts": 1.0,
+      "ego_x": 12.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 12.0,
+      "num_points": 46900
+    },
+    {
+      "ts": 2.0,
+      "ego_x": 24.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 12.0,
+      "num_points": 47100
+    },
+    {
+      "ts": 3.0,
+      "ego_x": 36.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 12.0,
+      "num_points": 47400
+    },
+    {
+      "ts": 4.0,
+      "ego_x": 48.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 11.5,
+      "num_points": 46800
+    },
+    {
+      "ts": 5.0,
+      "ego_x": 59.5,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 11.0,
+      "num_points": 47300
+    },
+    {
+      "ts": 6.0,
+      "ego_x": 70.5,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.5,
+      "num_points": 47600
+    },
+    {
+      "ts": 7.0,
+      "ego_x": 81.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47800
+    },
+    {
+      "ts": 8.0,
+      "ego_x": 91.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 9.5,
+      "num_points": 47500
+    },
+    {
+      "ts": 9.0,
+      "ego_x": 100.5,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 9.0,
+      "num_points": 47200
+    },
+    {
+      "ts": 10.0,
+      "ego_x": 109.5,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 9.0,
+      "num_points": 46900
+    },
+    {
+      "ts": 15.0,
+      "ego_x": 157.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47100
+    },
+    {
+      "ts": 19.8,
+      "ego_x": 205.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 11.0,
+      "num_points": 47000
+    }
+  ],
+  "tracked_objects": [
+    {
+      "id": "veh_15001",
+      "type": "TYPE_VEHICLE",
+      "label": "Erratic Sedan",
+      "dims": [
+        4.6,
+        2.0,
+        1.5
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 22.0,
+          "y": -1.85,
+          "yaw": 0.0,
+          "speed": 11.0
+        },
+        {
+          "ts": 1.0,
+          "x": 33.0,
+          "y": -1.85,
+          "yaw": 0.05,
+          "speed": 11.0
+        },
+        {
+          "ts": 2.0,
+          "x": 44.0,
+          "y": -0.5,
+          "yaw": 0.12,
+          "speed": 11.5
+        },
+        {
+          "ts": 3.0,
+          "x": 55.5,
+          "y": 1.0,
+          "yaw": 0.08,
+          "speed": 12.0
+        },
+        {
+          "ts": 4.0,
+          "x": 67.5,
+          "y": 1.85,
+          "yaw": 0.0,
+          "speed": 12.0
+        },
+        {
+          "ts": 5.0,
+          "x": 79.5,
+          "y": 1.2,
+          "yaw": -0.1,
+          "speed": 11.5
+        },
+        {
+          "ts": 6.0,
+          "x": 91.0,
+          "y": -0.5,
+          "yaw": -0.15,
+          "speed": 11.0
+        },
+        {
+          "ts": 7.0,
+          "x": 102.0,
+          "y": -1.85,
+          "yaw": -0.08,
+          "speed": 11.0
+        },
+        {
+          "ts": 8.0,
+          "x": 113.0,
+          "y": -2.5,
+          "yaw": -0.05,
+          "speed": 10.5
+        },
+        {
+          "ts": 9.0,
+          "x": 123.5,
+          "y": -1.0,
+          "yaw": 0.12,
+          "speed": 11.0
+        },
+        {
+          "ts": 10.0,
+          "x": 134.5,
+          "y": 0.8,
+          "yaw": 0.1,
+          "speed": 11.5
+        },
+        {
+          "ts": 12.0,
+          "x": 157.5,
+          "y": 1.85,
+          "yaw": 0.0,
+          "speed": 12.0
+        },
+        {
+          "ts": 15.0,
+          "x": 193.5,
+          "y": -1.85,
+          "yaw": -0.06,
+          "speed": 11.0
+        }
+      ]
+    },
+    {
+      "id": "veh_15002",
+      "type": "TYPE_VEHICLE",
+      "label": "SUV",
+      "dims": [
+        5.1,
+        2.2,
+        1.8
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 50.0,
+          "y": 1.85,
+          "yaw": 3.14,
+          "speed": 11.0
+        },
+        {
+          "ts": 10.0,
+          "x": -60.0,
+          "y": 1.85,
+          "yaw": 3.14,
+          "speed": 11.0
+        }
+      ]
+    },
+    {
+      "id": "veh_15003",
+      "type": "TYPE_VEHICLE",
+      "label": "Compact",
+      "dims": [
+        4.2,
+        1.8,
+        1.4
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": -8.0,
+          "y": -1.85,
+          "yaw": 0.0,
+          "speed": 10.0
+        },
+        {
+          "ts": 10.0,
+          "x": 92.0,
+          "y": -1.85,
+          "yaw": 0.0,
+          "speed": 10.0
+        }
+      ]
+    },
+    {
+      "id": "veh_15004",
+      "type": "TYPE_VEHICLE",
+      "label": "Parked Pickup",
+      "dims": [
+        5.8,
+        2.3,
+        1.9
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 75.0,
+          "y": -5.5,
+          "speed": 0.0
+        }
+      ]
+    },
+    {
+      "id": "ped_25001",
+      "type": "TYPE_PEDESTRIAN",
+      "label": "Pedestrian",
+      "dims": [
+        0.6,
+        0.6,
+        1.75
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 110.0,
+          "y": -7.5,
+          "speed": 1.1
+        },
+        {
+          "ts": 10.0,
+          "x": 121.0,
+          "y": -7.5,
+          "speed": 1.1
+        }
+      ]
+    },
+    {
+      "id": "cyc_35001",
+      "type": "TYPE_CYCLIST",
+      "label": "Cyclist",
+      "dims": [
+        1.8,
+        0.7,
+        1.7
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 60.0,
+          "y": -4.5,
+          "yaw": 0.0,
+          "speed": 5.5
+        },
+        {
+          "ts": 10.0,
+          "x": 115.0,
+          "y": -4.5,
+          "yaw": 0.0,
+          "speed": 5.5
+        }
+      ]
+    }
+  ],
+  "incidents": [
+    {
+      "type": "swerving_vehicle",
+      "description": "Swerving vehicle \u2014 erratic lane changes ahead",
+      "trigger_ts": 2.0,
+      "ttc_seconds": 1.5,
+      "involved_ids": [
+        "veh_15001"
+      ],
+      "ego_speed_at_trigger": 12.0,
+      "severity": "high"
+    }
+  ],
+  "lidar_config": {
+    "sensor": "TOP",
+    "beams": 64,
+    "columns": 2650,
+    "range_m": 75.0,
+    "return": "FIRST"
+  },
+  "scenarioId": "swerving_vehicle"
+}

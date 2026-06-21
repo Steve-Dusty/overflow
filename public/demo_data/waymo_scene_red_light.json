@@ -1,0 +1,350 @@
+{
+  "context_name": "waymo_open_dataset_v2",
+  "segment_id": "10876852935291148519_3810_000_3830_000",
+  "segment_timestamp_micros": 1557864598712340,
+  "stats": {
+    "total_frames": 198,
+    "fps": 10,
+    "time_of_day": "Day",
+    "weather": "sunny",
+    "location": "location_sf"
+  },
+  "ego_vehicle": {
+    "type": "WAYMO_AV",
+    "length": 4.9,
+    "width": 2.1,
+    "height": 1.7
+  },
+  "frames": [
+    {
+      "ts": 0.0,
+      "ego_x": 0.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47200
+    },
+    {
+      "ts": 1.0,
+      "ego_x": 10.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 46900
+    },
+    {
+      "ts": 2.0,
+      "ego_x": 20.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47100
+    },
+    {
+      "ts": 3.0,
+      "ego_x": 30.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47400
+    },
+    {
+      "ts": 4.0,
+      "ego_x": 40.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 46800
+    },
+    {
+      "ts": 4.5,
+      "ego_x": 45.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47600
+    },
+    {
+      "ts": 5.0,
+      "ego_x": 50.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 9.0,
+      "num_points": 48000
+    },
+    {
+      "ts": 5.5,
+      "ego_x": 54.5,
+      "ego_y": -1.85,
+      "ego_yaw": 0.02,
+      "ego_speed": 6.5,
+      "num_points": 48300
+    },
+    {
+      "ts": 6.0,
+      "ego_x": 57.7,
+      "ego_y": -1.8,
+      "ego_yaw": 0.03,
+      "ego_speed": 4.0,
+      "num_points": 48500
+    },
+    {
+      "ts": 6.5,
+      "ego_x": 59.7,
+      "ego_y": -1.75,
+      "ego_yaw": 0.02,
+      "ego_speed": 2.0,
+      "num_points": 48200
+    },
+    {
+      "ts": 7.0,
+      "ego_x": 60.5,
+      "ego_y": -1.8,
+      "ego_yaw": 0.0,
+      "ego_speed": 0.5,
+      "num_points": 47900
+    },
+    {
+      "ts": 8.0,
+      "ego_x": 60.5,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 0.0,
+      "num_points": 47400
+    },
+    {
+      "ts": 10.0,
+      "ego_x": 65.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 5.0,
+      "num_points": 47100
+    },
+    {
+      "ts": 15.0,
+      "ego_x": 110.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 46800
+    },
+    {
+      "ts": 19.8,
+      "ego_x": 158.0,
+      "ego_y": -1.85,
+      "ego_yaw": 0.0,
+      "ego_speed": 10.0,
+      "num_points": 47000
+    }
+  ],
+  "tracked_objects": [
+    {
+      "id": "veh_14001",
+      "type": "TYPE_VEHICLE",
+      "label": "Red-Light Runner",
+      "dims": [
+        4.8,
+        2.0,
+        1.5
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 62.0,
+          "y": -40.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 2.0,
+          "x": 62.0,
+          "y": -12.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 4.0,
+          "x": 62.0,
+          "y": -12.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 4.5,
+          "x": 62.0,
+          "y": -5.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 5.0,
+          "x": 62.0,
+          "y": 2.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 5.5,
+          "x": 62.0,
+          "y": 9.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 6.0,
+          "x": 62.0,
+          "y": 16.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        },
+        {
+          "ts": 7.0,
+          "x": 62.0,
+          "y": 30.0,
+          "yaw": 1.57,
+          "speed": 14.0
+        }
+      ]
+    },
+    {
+      "id": "veh_14002",
+      "type": "TYPE_VEHICLE",
+      "label": "Sedan",
+      "dims": [
+        4.6,
+        2.0,
+        1.5
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 25.0,
+          "y": -1.85,
+          "yaw": 0.0,
+          "speed": 10.5
+        },
+        {
+          "ts": 5.0,
+          "x": 77.5,
+          "y": -1.85,
+          "yaw": 0.0,
+          "speed": 10.5
+        },
+        {
+          "ts": 10.0,
+          "x": 130.0,
+          "y": -1.85,
+          "yaw": 0.0,
+          "speed": 10.5
+        }
+      ]
+    },
+    {
+      "id": "veh_14003",
+      "type": "TYPE_VEHICLE",
+      "label": "SUV",
+      "dims": [
+        5.1,
+        2.2,
+        1.8
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 80.0,
+          "y": 1.85,
+          "yaw": 3.14,
+          "speed": 9.5
+        },
+        {
+          "ts": 10.0,
+          "x": -15.0,
+          "y": 1.85,
+          "yaw": 3.14,
+          "speed": 9.5
+        }
+      ]
+    },
+    {
+      "id": "veh_14004",
+      "type": "TYPE_VEHICLE",
+      "label": "Parked Sedan",
+      "dims": [
+        4.5,
+        2.0,
+        1.5
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 50.0,
+          "y": -5.5,
+          "speed": 0.0
+        }
+      ]
+    },
+    {
+      "id": "ped_24001",
+      "type": "TYPE_PEDESTRIAN",
+      "label": "Pedestrian",
+      "dims": [
+        0.6,
+        0.6,
+        1.75
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 70.0,
+          "y": 8.5,
+          "speed": 0.0
+        }
+      ]
+    },
+    {
+      "id": "ped_24002",
+      "type": "TYPE_PEDESTRIAN",
+      "label": "Pedestrian",
+      "dims": [
+        0.5,
+        0.5,
+        1.65
+      ],
+      "track": [
+        {
+          "ts": 0.0,
+          "x": 55.0,
+          "y": -8.0,
+          "speed": 1.2
+        },
+        {
+          "ts": 10.0,
+          "x": 67.0,
+          "y": -8.0,
+          "speed": 1.2
+        }
+      ]
+    }
+  ],
+  "incidents": [
+    {
+      "type": "red_light_violation",
+      "description": "Red light runner \u2014 cross-traffic vehicle",
+      "trigger_ts": 4.5,
+      "ttc_seconds": 0.7,
+      "involved_ids": [
+        "veh_14001"
+      ],
+      "ego_speed_at_trigger": 10.0,
+      "severity": "critical"
+    }
+  ],
+  "lidar_config": {
+    "sensor": "TOP",
+    "beams": 64,
+    "columns": 2650,
+    "range_m": 75.0,
+    "return": "FIRST"
+  },
+  "scenarioId": "red_light_runner"
+}
